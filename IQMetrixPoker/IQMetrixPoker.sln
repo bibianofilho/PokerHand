@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMetrixPoker", "IQMetrixPoker\IQMetrixPoker.csproj", "{CA7DB290-8053-4DA2-B719-831A87E3DD08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMetrixPokerApp", ".\IQMetrixPokerApp\IQMetrixPokerApp.csproj", "{3AB1A086-1978-4138-954E-EA95D5A8AD96}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08} = {CA7DB290-8053-4DA2-B719-831A87E3DD08}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQmetrixPokerTest", ".\IQmetrixPokerTest\IQmetrixPokerTest.csproj", "{116C8641-3993-43D0-B29C-83E1AF3E8749}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08} = {CA7DB290-8053-4DA2-B719-831A87E3DD08}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA7DB290-8053-4DA2-B719-831A87E3DD08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AB1A086-1978-4138-954E-EA95D5A8AD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AB1A086-1978-4138-954E-EA95D5A8AD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AB1A086-1978-4138-954E-EA95D5A8AD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AB1A086-1978-4138-954E-EA95D5A8AD96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{116C8641-3993-43D0-B29C-83E1AF3E8749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{116C8641-3993-43D0-B29C-83E1AF3E8749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{116C8641-3993-43D0-B29C-83E1AF3E8749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{116C8641-3993-43D0-B29C-83E1AF3E8749}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
