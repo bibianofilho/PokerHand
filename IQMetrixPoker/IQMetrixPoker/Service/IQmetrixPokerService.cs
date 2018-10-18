@@ -80,7 +80,7 @@ namespace IQMetrixPoker.Service
         private List<Player> GetHighestHandWinner(List<HandEvaluatorService> handEvaluators)
         {
             var winningGroup = handEvaluators
-                                       .GroupBy( h => h.HandValues.Total)
+                                       .GroupBy( h => h.HandValue.Total)
                                        .OrderBy( h => h.Key)
                                        .Last();
 
@@ -93,10 +93,10 @@ namespace IQMetrixPoker.Service
             if (winners.Count() > 1)
             {
                 var playerHandsWinners = handEvaluators.Where(p => winners.Any(w => p.CurrentPlayer == w)).ToList();
-                for (int i = 0; i < playerHandsWinners[0].HandValues.HighCard.Count(); i++)
+                for (int i = 0; i < playerHandsWinners[0].HandValue.HighCard.Count(); i++)
                 {
-                    var highCard = playerHandsWinners.Select(_ => _.HandValues.HighCard[i]).Max();
-                    playerHandsWinners = playerHandsWinners.Where(p => p.HandValues.HighCard.Any(ph => ph == highCard)).ToList();
+                    var highCard = playerHandsWinners.Select(_ => _.HandValue.HighCard[i]).Max();
+                    playerHandsWinners = playerHandsWinners.Where(p => p.HandValue.HighCard.Any(ph => ph == highCard)).ToList();
                     if (playerHandsWinners.Count() == 1)
                     {
                         break;
@@ -115,8 +115,8 @@ namespace IQMetrixPoker.Service
                 List<int> highestKickerTried = new List<int>();
                 for (int i = 0; i < 3; i++)
                 {
-                    var highestKickerTemp = playerHandsWinners.Where( p => !highestKickerTried.Any(tried => tried == (p.HighestKicker[i])))
-                        .Select(p => p.HighestKicker[i])
+                    var highestKickerTemp = playerHandsWinners.Where( p => !highestKickerTried.Any(tried => tried == (p.HandValue.HighestKicker[i])))
+                        .Select(p => p.HandValue.HighestKicker[i])
                         .GroupBy(p => p)
                         .Where(g => g.Count() > 1)
                         .Select( p => p.Key).ToList();
@@ -126,7 +126,7 @@ namespace IQMetrixPoker.Service
                     }
                     else
                     {
-                        winners = playerHandsWinners.Where(p => p.HighestKicker.Any(h => h == playerHandsWinners.Select( hk => hk.HighestKicker[i]).Max()))
+                        winners = playerHandsWinners.Where(p => p.HandValue.HighestKicker.Any(h => h == playerHandsWinners.Select( hk => hk.HandValue.HighestKicker[i]).Max()))
                                                     .Select(p => p.CurrentPlayer).ToList();
                         break;
                     }

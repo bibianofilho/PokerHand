@@ -26,7 +26,7 @@ namespace IQMetrixPoker.Service
         //Properties
         private Card[] _cards { get; set; }
         private HandValue _handValue;
-        public HandValue HandValues
+        public HandValue HandValue
         {
             get { return _handValue; }
             set { _handValue = value; }
@@ -44,19 +44,7 @@ namespace IQMetrixPoker.Service
                 this._pokerHand = value;
             }
         }
-        private int[] _highestKicker;
-        public int[] HighestKicker
-        {
-            get
-            {
-                return this._highestKicker;
-            }
-            private set
-            {
-                // Can only set value in this class.
-                this._highestKicker = value;
-            }
-        }
+        
 
         private Player _currentPlayer;
         public Player CurrentPlayer {
@@ -161,7 +149,7 @@ namespace IQMetrixPoker.Service
             var highCard = _cards.Where(c => onePair != c.MyValue)
                                  .OrderByDescending( c => c.MyValue )
                                  .Select(c =>  (int) c.MyValue);
-            HighestKicker = highCard.ToArray(); 
+            _handValue.HighestKicker = highCard.ToArray(); 
         }
     }
 }
