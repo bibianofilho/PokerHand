@@ -9,7 +9,7 @@ namespace IQmetrixPokerTest
     [TestClass]
     public class IQMetrixPokerTest
     {
-        
+        //Two One Pair
         [TestMethod]
         public void  Test1()
         {
@@ -62,6 +62,7 @@ namespace IQmetrixPokerTest
             CollectionAssert.AreEqual(expected, winners);
         }
 
+        //Two Flushs
         [TestMethod]
         public void Test2()
         {
@@ -114,6 +115,7 @@ namespace IQmetrixPokerTest
             CollectionAssert.AreEqual(expected, winners);
         }
 
+        //Three one Pair
         [TestMethod]
         public void Test3()
         {
@@ -166,6 +168,7 @@ namespace IQmetrixPokerTest
             CollectionAssert.AreEqual(expected, winners);
         }
 
+        //High Card
         [TestMethod]
         public void Test4()
         {
@@ -291,6 +294,110 @@ namespace IQmetrixPokerTest
                 new Card { MyValue= Card.PlayingCardNominalValue.Eight, MySuit = Card.CardSuit.Hearts  },
                 new Card { MyValue= Card.PlayingCardNominalValue.Nine, MySuit = Card.CardSuit.Spades  },
                 new Card { MyValue= Card.PlayingCardNominalValue.Queen, MySuit = Card.CardSuit.Diamonds  },
+            };
+
+            Player playerThree = new Player();
+            playerThree.Name = "Bob";
+            playerThree.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Two, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Five, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Ten, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Jack, MySuit = Card.CardSuit.Diamonds  },
+            };
+
+            List<Player> players = new List<Player>();
+            players.Add(playerOne);
+            players.Add(playerTwo);
+            players.Add(playerThree);
+
+
+            IQmetrixPokerService iQmetrixPokerService = new IQmetrixPokerService();
+            var winners = iQmetrixPokerService.EvaluateWinners(players);
+            foreach (var item in winners)
+            {
+                Console.WriteLine(item.Name);
+            }
+
+            var expected = new List<Player>();
+            expected.Add(playerOne);
+
+            CollectionAssert.AreEqual(expected, winners);
+        }
+
+        [TestMethod]
+        public void FlushOnePairTest()
+        {
+            Player playerOne = new Player();
+            playerOne.Name = "Joe";
+            playerOne.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Ace, MySuit = Card.CardSuit.Hearts  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Ace, MySuit = Card.CardSuit.Diamonds  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Eight, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Seven, MySuit = Card.CardSuit.Diamonds  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Hearts  },
+            };
+
+            Player playerTwo = new Player();
+            playerTwo.Name = "Jen";
+            playerTwo.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Two, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Three, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Five, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Six, MySuit = Card.CardSuit.Clubs  },
+            };
+
+            Player playerThree = new Player();
+            playerThree.Name = "Bob";
+            playerThree.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Two, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Five, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Ten, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Jack, MySuit = Card.CardSuit.Diamonds  },
+            };
+
+            List<Player> players = new List<Player>();
+            players.Add(playerOne);
+            players.Add(playerTwo);
+            players.Add(playerThree);
+
+
+            IQmetrixPokerService iQmetrixPokerService = new IQmetrixPokerService();
+            var winners = iQmetrixPokerService.EvaluateWinners(players);
+            foreach (var item in winners)
+            {
+                Console.WriteLine(item.Name);
+            }
+
+            var expected = new List<Player>();
+            expected.Add(playerTwo);
+
+            CollectionAssert.AreEqual(expected, winners);
+        }
+
+        [TestMethod]
+        public void FlushHightCardTest()
+        {
+            Player playerOne = new Player();
+            playerOne.Name = "Joe";
+            playerOne.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Ace, MySuit = Card.CardSuit.Hearts  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Two, MySuit = Card.CardSuit.Hearts  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Eight, MySuit = Card.CardSuit.Hearts  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Seven, MySuit = Card.CardSuit.Hearts  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Hearts  },
+            };
+
+            Player playerTwo = new Player();
+            playerTwo.Name = "Jen";
+            playerTwo.PlayerHand = new Card[]{
+                new Card { MyValue= Card.PlayingCardNominalValue.Two, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Three, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Four, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Five, MySuit = Card.CardSuit.Clubs  },
+                new Card { MyValue= Card.PlayingCardNominalValue.Ace, MySuit = Card.CardSuit.Clubs  },
             };
 
             Player playerThree = new Player();

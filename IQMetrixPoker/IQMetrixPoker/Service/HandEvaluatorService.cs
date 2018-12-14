@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IQMetrixPoker.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,18 +20,13 @@ namespace IQMetrixPoker.Service
         StraightFlush,
         RoyalFlush
     }
-    public struct HandValue
-    {
-        public int Total { get; set; }
-        public int HighCard { get; set; }
-
-    }
+    
     public class HandEvaluatorService
     {
-        //Properies
+        //Properties
         private Card[] _cards { get; set; }
         private HandValue _handValue;
-        public HandValue HandValues
+        public HandValue HandValue
         {
             get { return _handValue; }
             set { _handValue = value; }
@@ -48,19 +44,7 @@ namespace IQMetrixPoker.Service
                 this._pokerHand = value;
             }
         }
-        private int[] _highestKicker;
-        public int[] HighestKicker
-        {
-            get
-            {
-                return this._highestKicker;
-            }
-            private set
-            {
-                // Can only set value in this class.
-                this._highestKicker = value;
-            }
-        }
+        
 
         private Player _currentPlayer;
         public Player CurrentPlayer {
@@ -80,22 +64,19 @@ namespace IQMetrixPoker.Service
         {
             this.CurrentPlayer = currentPlayer;
             _cards = new Card[5];
-            _cards = currentPlayer.PortedPlayerHand;
+            _cards = currentPlayer.PlayerHand;
             _handValue = new HandValue();
         }
 
         public void EvaluateHand()
         {
             if (Flush())
-            {
-                _handValue.Total = (int)Hand.Flush;
-                _pokerHand = Hand.Flush;
-                _handValue.HighCard = (int)_cards.Select(c => c.MyValue) .Max();
+            { 
+                _pokerHand = Hand.Flush;               
                 return;
             }
             else if (ThreeOfKind())
-            {
-                _handValue.Total = (int)Hand.ThreeOfKind;
+            { 
                 _pokerHand = Hand.ThreeOfKind;
                 return;
             }else if (OnePair())
@@ -103,70 +84,62 @@ namespace IQMetrixPoker.Service
                 _pokerHand = Hand.OnePair;
                 return;
             }
-
-            _handValue.HighCard = (int)_cards[4].MyValue;
+             
+            _handValue.HighCard = _cards
+                                 .OrderByDescending(_ => _.MyValue)
+                                 .Select(_ => (int)_.MyValue).ToArray();
             _pokerHand = Hand.Nothing;
-        }
-
-        private bool HasThreeOfaKind(Card[] cards)
-        {
-            var result = cards.GroupBy(card => card.MyValue)
-                              .Any(group => group.Count() == 3);
-            return result;
         }
 
         private bool Flush()
         {           
             var result = _cards.GroupBy(card => card.MySuit)
                                .Any(group => group.Count() == 5);
+
+            if (result)
+            {
+                _handValue.Total = (int)Hand.Flush;                 
+                _handValue.HighCard = _cards
+                                 .OrderByDescending(_ => _.MyValue)
+                                 .Select( c => (int) c.MyValue).ToArray();
+            }
             return result;
         }
 
         private bool ThreeOfKind()
         {
-            if(( _cards[0].MyValue == _cards[1].MyValue  && _cards[0].MyValue == _cards[2].MyValue) ||
-              ( _cards[1].MyValue == _cards[2].MyValue && _cards[1].MyValue == _cards[2].MyValue))
+            var result = _cards.GroupBy(g => g.MyValue)
+                                 .Where(g => g.Count() == 3)
+                                 .Select( c => (int) c.Key).ToArray();
+            if (result.Count() > 0)
             {
-                _handValue.Total = (int)_cards[2].MyValue * 3;
-                _handValue.HighCard = (int)_cards[4].MyValue;
-                return true;
-            }else if ( _cards[2].MyValue == _cards[3].MyValue && _cards[2].MyValue == _cards[4].MyValue)
-            {
-                _handValue.Total = (int)_cards[2].MyValue * 3;
-                _handValue.HighCard = (int)_cards[1].MyValue;
+                _handValue.HighCard = _cards.GroupBy(g => g.MyValue)
+                                 .Where(g => g.Count() == 3)
+                                 .Select( c => (int) c.Key).ToArray();
+                _handValue.Total = (int)Hand.ThreeOfKind;
                 return true;
             }
+
             return false;
         }
 
         private bool OnePair()
         {
             GetHighestKicker();
-            if (_cards[0].MyValue == _cards[1].MyValue)
+            var result = _cards.GroupBy(g => g.MyValue)
+                                .Where(g => g.Count() == 2)
+                                .Select( c => (int) c.Key).ToArray();
+            if (result.Count() > 0)
             {
-                _handValue.Total = (int)_cards[0].MyValue * 2;
-                _handValue.HighCard = (int)_cards[4].MyValue * 2;
-                return true;
-            }else if (_cards[1].MyValue == _cards[2].MyValue)
-            {
-                _handValue.Total = (int)_cards[1].MyValue * 2;
-                _handValue.HighCard = (int)_cards[4].MyValue * 2;
-                return true;
-            }else if (_cards[2].MyValue == _cards[3].MyValue)
-            {
-                _handValue.Total = (int)_cards[2].MyValue * 2;
-                _handValue.HighCard = (int)_cards[4].MyValue * 2;
-                return true;
-            }
-            else if (_cards[3].MyValue == _cards[4].MyValue)
-            {
-                _handValue.Total = (int)_cards[3].MyValue * 2;
-                _handValue.HighCard = (int)_cards[4].MyValue * 2;
+                _handValue.HighCard = _cards.GroupBy(g => g.MyValue)
+                               .Where(g => g.Count() == 2)
+                               .Select( c => (int) c.Key).ToArray();
+                _handValue.Total = (int)Hand.OnePair;
                 return true;
             }
             return false;
         }
-
+         
         public void GetHighestKicker()
         {
             var onePair = _cards.GroupBy(card => card.MyValue)
@@ -174,9 +147,9 @@ namespace IQMetrixPoker.Service
                                 .Select(g => g.Key).SingleOrDefault();
 
             var highCard = _cards.Where(c => onePair != c.MyValue)
-                                 .OrderByDescending(_ => _.MyValue )
-                                 .Select(_ =>  (int)_.MyValue);
-            HighestKicker = highCard.ToArray(); 
+                                 .OrderByDescending( c => c.MyValue )
+                                 .Select(c =>  (int) c.MyValue);
+            _handValue.HighestKicker = highCard.ToArray(); 
         }
     }
 }

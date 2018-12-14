@@ -44,10 +44,8 @@ namespace IQMetrixPoker.Service
             {
                 Console.WriteLine(item.Name);
             }
-            return winners.ToList();
+            return winners;
         }
-
-        
 
         private void PrintCardColored(Card[] cards)
         {
@@ -70,46 +68,71 @@ namespace IQMetrixPoker.Service
             }
         }
 
-        //The method 
-        private IEnumerable<Player> GetWinners(IEnumerable<HandEvaluatorService> playerHands)
+        //The method Return Winners
+        private List<Player> GetWinners(List<HandEvaluatorService> handEvaluators)
         {
+            var winners = GetHighestHandWinner(handEvaluators);
+            winners = GetHighestCardHandWinner(winners, handEvaluators);
+            winners = GetHighestKickerWinner(winners, handEvaluators);
+            return winners.ToList();
+        }
+        
+        private List<Player> GetHighestHandWinner(List<HandEvaluatorService> handEvaluators)
+        {
+            var winningGroup = handEvaluators
+                                       .GroupBy( h => h.HandValue.Total)
+                                       .OrderBy( h => h.Key)
+                                       .Last();
 
-            var winningGroup = playerHands
-                                        .GroupBy(_ => _.HandValues.Total)
-                                        .OrderBy(_ => _.Key)
-                                        .Last();
+            var winners = winningGroup.Select( h => h.CurrentPlayer).ToList();
+            return winners;
+        }
 
-            var winners = winningGroup.Select(_ => _.CurrentPlayer).ToArray();
-
-            List<HandEvaluatorService> playerHandsWinners = new List<HandEvaluatorService>() ;
-
+        private List<Player> GetHighestCardHandWinner(List<Player> winners, List<HandEvaluatorService> handEvaluators)
+        {
             if (winners.Count() > 1)
             {
-                playerHandsWinners = playerHands.Where(p => winners.Any(w => p.CurrentPlayer == w)).ToList();
-                var highCard = playerHandsWinners.OrderByDescending(h => h.HandValues.HighCard).Take(1).SingleOrDefault().HandValues.HighCard;
-                winners = playerHandsWinners.Where(p => p.HandValues.HighCard == highCard).Select(_ => _.CurrentPlayer).ToArray();
+                var playerHandsWinners = handEvaluators.Where(p => winners.Any(w => p.CurrentPlayer == w)).ToList();
+                for (int i = 0; i < playerHandsWinners[0].HandValue.HighCard.Count(); i++)
+                {
+                    var highCard = playerHandsWinners.Select(_ => _.HandValue.HighCard[i]).Max();
+                    playerHandsWinners = playerHandsWinners.Where(p => p.HandValue.HighCard.Any(ph => ph == highCard)).ToList();
+                    if (playerHandsWinners.Count() == 1)
+                    {
+                        break;
+                    }
+                }
+               winners = playerHandsWinners.Select(w => w.CurrentPlayer).ToList();
             }
+            return winners;
+        }
 
-            if (winners.Count() > 1 && playerHands.Take(1).SingleOrDefault().PokerHand == Hand.OnePair)
+        private List<Player> GetHighestKickerWinner(List<Player> winners, List<HandEvaluatorService> handEvaluators)
+        {
+            if (winners.Count() > 1 && handEvaluators.Take(1).SingleOrDefault().PokerHand == Hand.OnePair)
             {
+                var playerHandsWinners = handEvaluators.Where(p => winners.Any(w => p.CurrentPlayer == w)).ToList();
                 List<int> highestKickerTried = new List<int>();
-                highestKickerTried.Add(0);
                 for (int i = 0; i < 3; i++)
                 {
-                    var highestKickerTemp = playerHandsWinners.Where(_ => !highestKickerTried.Any(tried => tried == (_.HighestKicker[i]))).Select(p => p.HighestKicker[i]).GroupBy(_ => _).Where( g => g.Count() > 1).Select( _ => _.Key).ToList();
+                    var highestKickerTemp = playerHandsWinners.Where( p => !highestKickerTried.Any(tried => tried == (p.HandValue.HighestKicker[i])))
+                        .Select(p => p.HandValue.HighestKicker[i])
+                        .GroupBy(p => p)
+                        .Where(g => g.Count() > 1)
+                        .Select( p => p.Key).ToList();
                     if (highestKickerTemp.Count() > 0)
                     {
                         highestKickerTried.Add(highestKickerTemp[0]);
                     }
                     else
                     {
-                        winners =  playerHandsWinners.Where(p => p.HighestKicker.Any(h => h == playerHandsWinners.Select(_ => _.HighestKicker[i]).Max())).Select( p => p.CurrentPlayer).ToArray();
+                        winners = playerHandsWinners.Where(p => p.HandValue.HighestKicker.Any(h => h == playerHandsWinners.Select( hk => hk.HandValue.HighestKicker[i]).Max()))
+                                                    .Select(p => p.CurrentPlayer).ToList();
                         break;
                     }
                 }
             }
             return winners;
         }
-        
     }
 }

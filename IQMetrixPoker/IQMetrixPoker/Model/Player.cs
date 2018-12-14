@@ -21,27 +21,13 @@ namespace IQMetrixPoker.Service
             }
         }
 
-        private Card[] sortedPlayerHand;
-        public Card[] PortedPlayerHand
-        {
-            get
-            {
-                return this.sortedPlayerHand;
-            }
-            private set
-            {
-                this.sortedPlayerHand = value;
-            }
-        }
-
         private void sortCards()
-        {
-            sortedPlayerHand = new Card[5];
+        {            
             var queryPalyer = from hand in PlayerHand
-                              orderby hand.MyValue
+                              orderby hand.MyValue descending
                               select hand;
 
-            sortedPlayerHand = queryPalyer.ToArray();
+            _playerHand = queryPalyer.ToArray();
         }
     }
 }

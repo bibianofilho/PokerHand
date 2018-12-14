@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Card.cs" />
+    <Compile Include="Model\HandValue.cs" />
     <Compile Include="Service\HandEvaluatorService.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
